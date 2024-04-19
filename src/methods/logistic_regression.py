@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..utils import get_n_classes, label_to_onehot, onehot_to_label
+from ..utils import get_n_classes, label_to_onehot, onehot_to_label , append_bias_term
 
 
 class LogisticRegression(object):
@@ -20,10 +20,10 @@ class LogisticRegression(object):
         self.lr = lr
         self.max_iters = max_iters
         self.task_kind = task_kind
+        
 
 
-
-    def fit(self, training_data, training_labels):
+    def fit(self,training_data, training_labels):
         """
         Trains the model, returns predicted labels for training data.
 
@@ -36,8 +36,7 @@ class LogisticRegression(object):
         ##
         ###
         #### WRITE YOUR CODE HERE!
-        training_data_scaled = np.hstack((np.ones((training_data.shape[0], 1)), training_data))
-
+        training_data_scaled = append_bias_term(training_data)
         D = training_data_scaled.shape[1]  # number of features
         C = get_n_classes(training_labels) # number of classes
         label_onehot = label_to_onehot(training_labels,C)
@@ -47,13 +46,18 @@ class LogisticRegression(object):
             exp_logits = np.exp(logits)
             probabilities = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
             grad = training_data_scaled.T @ (probabilities - label_onehot)
-            
             self.weights = self.weights - self.lr * grad
+            
 
+        
         pred_labels = self.predict(training_data)
+
+        
         ###
         ##
+
         return pred_labels
+
 
     def predict(self, test_data):
         """
@@ -67,17 +71,20 @@ class LogisticRegression(object):
         ##
         ###
         #### WRITE YOUR CODE HERE!
-
+        ###
+        #
         #exp_logits = np.exp(test_data @ self.weights)
         #probabilities = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
+        test_data_scaled=append_bias_term(test_data)
 
-        test_data_scaled = np.hstack((np.ones((test_data.shape[0], 1)), test_data))
+       # test_data_scaled = np.hstack((np.ones((test_data.shape[0], 1)), test_data))
         exp_logits = np.exp(test_data_scaled @ self.weights)
         probabilities = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
         
     
-        # Predict labels
+    # Predict labels
         pred_labels= onehot_to_label(probabilities)
         pred_labels = np.argmax(probabilities, axis=1)
-
         return pred_labels
+    
+    
