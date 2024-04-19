@@ -73,16 +73,10 @@ class LogisticRegression(object):
         #### WRITE YOUR CODE HERE!
         ###
         #
-        #exp_logits = np.exp(test_data @ self.weights)
-        #probabilities = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
         test_data_scaled=append_bias_term(test_data)
-
-       # test_data_scaled = np.hstack((np.ones((test_data.shape[0], 1)), test_data))
         exp_logits = np.exp(test_data_scaled @ self.weights)
         probabilities = exp_logits / np.sum(exp_logits, axis=1, keepdims=True)
-        
-    
-    # Predict labels
+     # Predict labels
         pred_labels= onehot_to_label(probabilities)
         pred_labels = np.argmax(probabilities, axis=1)
         return pred_labels
