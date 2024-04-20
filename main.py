@@ -41,17 +41,8 @@ def main(args):
 
 
     ## 2. Then we must prepare it. This is were you can create a validation set,
-    #  normalize, add bias, etc.
-    mean = np.mean(xtrain, axis=0)
-    std = np.std(xtrain, axis=0)
 
-    # Normalize the data
-    xtrain = normalize_fn(xtrain, mean, std)
-    xtest = normalize_fn(xtest, mean, std)
 
-    # Append bias term
-    xtrain = append_bias_term(xtrain)
-    xtest = append_bias_term(xtest)
 
 
     # Make a validation set (it can overwrite xtest, ytest)
@@ -73,28 +64,21 @@ def main(args):
         xtrain = xtrain[num_validation_samples:]
         ytrain = ytrain[num_validation_samples:]
 
+        
+        pass
 
-        # Computing mean and standard deviation from training data
         mean = np.mean(xtrain, axis=0)
         std = np.std(xtrain, axis=0)
 
-        # Handling zero standard deviations
-        zero_stds = np.where(std == 0)[0]
-        std[zero_stds] = 1e-8  # Set zero standard deviations to avoid division by zero
-
-        # Normalizing the data
+        # Normalize the data
         xtrain = normalize_fn(xtrain, mean, std)
-        xval = normalize_fn(xval, mean, std)
         xtest = normalize_fn(xtest, mean, std)
+        xval = normalize_fn(xval, mean, std) if not args.test else None
 
-        # Appending bias term
+        # Append bias term
         xtrain = append_bias_term(xtrain)
-        xval = append_bias_term(xval)
         xtest = append_bias_term(xtest)
-
-
-        ### WRITE YOUR CODE HERE
-        pass
+        xval = append_bias_term(xval) if not args.test else None
 
         ### WRITE YOUR CODE HERE to do any other data processing
 
