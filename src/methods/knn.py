@@ -1,5 +1,4 @@
 import numpy as np
-
 class KNN(object):
     """
         kNN classifier object.
@@ -9,10 +8,11 @@ class KNN(object):
         """
             Call set_arguments function of this class.
         """
-        self.k = k
-        self.task_kind = task_kind
         self.training_labels = None
         self.training_data = None
+        self.k = k
+        self.task_kind = task_kind
+
 
     def fit(self, training_data, training_labels):
         """
@@ -32,18 +32,15 @@ class KNN(object):
         ##
         ###
         #### YOUR CODE HERE!
-        # Normalize the training data
-        #self.training_data = (training_data - np.mean(training_data, axis=0)) / np.std(training_data, axis=0)
+       
         self.training_data = training_data
 
-        # Save the training labels
         self.training_labels = training_labels
 
-        # Predict the labels for the training data
+        # Predicting the labels for the training data
         pred_labels = self.predict(training_data)
         ###
         ##
- 
         return pred_labels
 
     def predict(self, test_data):
@@ -58,18 +55,17 @@ class KNN(object):
         ##
         ###
         #### YOUR CODE HERE!
-        #ERROR if there's no training data
         
+        #ERROR if there's no training data
         if self.training_data is None or self.training_labels is None:
             raise ValueError("Model has not been trained.")
 
-        #normalizing the data
-        #test_data = (test_data - np.mean(self.training_data, axis=0)) / np.std(self.training_data, axis=0)
+
 
         #implementing the test labels with the right shape
-        if self.task_kind == "classification":  # breed_identifying
+        if self.task_kind == "classification":  # classification
             test_labels = np.zeros(len(test_data), dtype=np.int_)
-        elif self.task_kind == "regression":  # center_locating
+        elif self.task_kind == "regression":  # regression
             shape = self.training_labels.shape[1]
             test_labels = np.zeros((len(test_data), shape))
 
@@ -82,13 +78,13 @@ class KNN(object):
 
             k_nearest_labels = self.training_labels[k_nearest_indices]
 
-            if self.task_kind == "classification":  # breed_identifying
+            if self.task_kind == "classification":   #classification
                 test_labels[i] = np.argmax(np.bincount(k_nearest_labels))
-                
-            elif self.task_kind == "regression":  # center_locating
+
+            elif self.task_kind == "regression":  #regressiom
                 test_labels[i] = np.mean(k_nearest_labels, axis=0)
             else:
                 raise ValueError("Unknown task kind. Supported options: 'classification', 'regression'.")
-       
+        ###
         ##
         return test_labels
