@@ -2,6 +2,7 @@ import argparse
 
 import numpy as np
 
+
 from src.data import load_data
 from src.methods.dummy_methods import DummyClassifier
 from src.methods.logistic_regression import LogisticRegression
@@ -25,7 +26,7 @@ def main(args):
 
     ##EXTRACTED FEATURES DATASET
     if args.data_type == "features":
-        feature_data = np.load('features.npz',allow_pickle=True)
+        feature_data = np.load('features.npz',None,True)
         xtrain, xtest, ytrain, ytest, ctrain, ctest =feature_data['xtrain'],feature_data['xtest'],\
         feature_data['ytrain'],feature_data['ytest'],feature_data['ctrain'],feature_data['ctest']
 
@@ -41,28 +42,64 @@ def main(args):
 
     ## 2. Then we must prepare it. This is were you can create a validation set,
     #  normalize, add bias, etc.
+    mean = np.mean(xtrain, axis=0)
+    std = np.std(xtrain, axis=0)
+
+    # Normalize the data
+    xtrain = normalize_fn(xtrain, mean, std)
+    xtest = normalize_fn(xtest, mean, std)
+
+    # Append bias term
+    xtrain = append_bias_term(xtrain)
+    xtest = append_bias_term(xtest)
+
 
     # Make a validation set (it can overwrite xtest, ytest)
     if not args.test:
+        ### WRITE YOUR CODE HERE
         validation_split = 0.2
+        num_samples = xtrain.shape[0]
+        num_validation_samples = int(num_samples * validation_split)
 
-        num_validation = int(len(xtrain) * validation_split)
-
-        indices = np.arange(len(xtrain))
-        np.random.seed()
+        # Shuffling the data
+        indices = np.arange(num_samples)
         np.random.shuffle(indices)
-        
-        train_indices = indices[num_validation:]
-        valid_indices = indices[:num_validation]
+        xtrain = xtrain[indices]
+        ytrain = ytrain[indices]
 
-        xvalid = xtrain[valid_indices]
-        yvalid = ytrain[valid_indices]
-        xtrain = xtrain[train_indices]
-        ytrain = ytrain[train_indices]
+        # Splitting the sets into train and validation sets
+        xval = xtrain[:num_validation_samples]
+        yval = ytrain[:num_validation_samples]
+        xtrain = xtrain[num_validation_samples:]
+        ytrain = ytrain[num_validation_samples:]
 
-        cvalid = ctrain[valid_indices]
-        ctrain = ctrain[train_indices]
+
+        # Computing mean and standard deviation from training data
+        mean = np.mean(xtrain, axis=0)
+        std = np.std(xtrain, axis=0)
+
+        # Handling zero standard deviations
+        zero_stds = np.where(std == 0)[0]
+        std[zero_stds] = 1e-8  # Set zero standard deviations to avoid division by zero
+
+        # Normalizing the data
+        xtrain = normalize_fn(xtrain, mean, std)
+        xval = normalize_fn(xval, mean, std)
+        xtest = normalize_fn(xtest, mean, std)
+
+        # Appending bias term
+        xtrain = append_bias_term(xtrain)
+        xval = append_bias_term(xval)
+        xtest = append_bias_term(xtest)
+
+
+        ### WRITE YOUR CODE HERE
         pass
+
+        ### WRITE YOUR CODE HERE to do any other data processing
+
+
+
     
     ### WRITE YOUR CODE HERE to do any other data processing
 
@@ -77,15 +114,19 @@ def main(args):
     # Follow the "DummyClassifier" example for your methods
     if args.method == "dummy_classifier":
         method_obj = DummyClassifier(arg1=1, arg2=2)
-    elif args.method == "knn":  
+
+    elif args.method == "knn":
         if args.task == "center_locating":
-            method_obj = KNN( k=args.K, task_kind = "regression")
+            method_obj = KNN(k=args.K, task_kind="regression")
         elif args.task == "breed_identifying":
-            method_obj = KNN( k=args.K,task_kind = "classification")
+            method_obj = KNN(k=args.K, task_kind="classification")
+
     elif args.method == "logistic_regression":
-        method_obj = LogisticRegression(lr=args.lr, max_iters=args.max_iters)
+            method_obj = LogisticRegression(lr=args.lr, max_iters=args.max_iters)
     elif args.method == "linear_regression":
-        method_obj = LinearRegression(lmda=args.lmda)
+            method_obj = LinearRegression(lmda=args.lmda)
+    pass
+
 
     ## 4. Train and evaluate the method
 
