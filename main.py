@@ -1,4 +1,4 @@
-import argparse
+mport argparse
 
 import numpy as np
 
@@ -55,6 +55,7 @@ def main(args):
         # Shuffling the data
         indices = np.arange(num_samples)
         np.random.shuffle(indices)
+
         xtrain = xtrain[indices]
         ytrain = ytrain[indices]
 
@@ -64,21 +65,23 @@ def main(args):
         xtrain = xtrain[num_validation_samples:]
         ytrain = ytrain[num_validation_samples:]
 
-        
-        pass
 
-        mean = np.mean(xtrain, axis=0)
-        std = np.std(xtrain, axis=0)
 
-        # Normalize the data
-        xtrain = normalize_fn(xtrain, mean, std)
-        xtest = normalize_fn(xtest, mean, std)
-        xval = normalize_fn(xval, mean, std) if not args.test else None
+        ### WRITE YOUR CODE HERE
 
-        # Append bias term
-        xtrain = append_bias_term(xtrain)
-        xtest = append_bias_term(xtest)
-        xval = append_bias_term(xval) if not args.test else None
+
+    mean = np.mean(xtrain, axis=0)
+    std = np.std(xtrain, axis=0)
+
+    # Normalize the data
+    xtrain = normalize_fn(xtrain, mean, std)
+    xtest = normalize_fn(xtest, mean, std)
+    xval = normalize_fn(xval, mean, std) if not args.test else None
+
+    # Append bias term
+    xtrain = append_bias_term(xtrain)
+    xtest = append_bias_term(xtest)
+    xval = append_bias_term(xval) if not args.test else None
 
         ### WRITE YOUR CODE HERE to do any other data processing
 
