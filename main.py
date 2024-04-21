@@ -1,4 +1,4 @@
-mport argparse
+import argparse
 
 import numpy as np
 
@@ -47,50 +47,56 @@ def main(args):
 
     # Make a validation set (it can overwrite xtest, ytest)
     if not args.test:
-        ### WRITE YOUR CODE HERE
         validation_split = 0.2
         num_samples = xtrain.shape[0]
         num_validation_samples = int(num_samples * validation_split)
 
-        # Shuffling the data
+        # Create indices for shuffling
         indices = np.arange(num_samples)
         np.random.shuffle(indices)
 
+        # Shuffle both features and target values
         xtrain = xtrain[indices]
         ytrain = ytrain[indices]
 
-        # Splitting the sets into train and validation sets
+        # Split the shuffled data into train and validation sets
         xval = xtrain[:num_validation_samples]
         yval = ytrain[:num_validation_samples]
         xtrain = xtrain[num_validation_samples:]
         ytrain = ytrain[num_validation_samples:]
 
+        cvalid = ctrain[:num_validation_samples]
+        ctrain = ctrain[num_validation_samples:]
+
+        # Compute mean and standard deviation from the training set only
+        mean = np.mean(xtrain, axis=0)
+        std = np.std(xtrain, axis=0)
+
+        # Normalize the training, validation, and test sets using the same mean and std
+        xtrain = normalize_fn(xtrain, mean, std)
+        xval = normalize_fn(xval, mean, std)
+        xtest = normalize_fn(xtest, mean, std)
+
+        # Append bias term to all sets
+        xtrain = append_bias_term(xtrain)
+        xval = append_bias_term(xval)
+        xtest = append_bias_term(xtest)
+    else:
+        mean = np.mean(xtrain, axis=0)
+        std = np.std(xtrain, axis=0)
+
+        # Normalize the data
+        xtrain = normalize_fn(xtrain, mean, std)
+        xtest = normalize_fn(xtest, mean, std)
 
 
-        ### WRITE YOUR CODE HERE
-
-
-    mean = np.mean(xtrain, axis=0)
-    std = np.std(xtrain, axis=0)
-
-    # Normalize the data
-    xtrain = normalize_fn(xtrain, mean, std)
-    xtest = normalize_fn(xtest, mean, std)
-    xval = normalize_fn(xval, mean, std) if not args.test else None
-
-    # Append bias term
-    xtrain = append_bias_term(xtrain)
-    xtest = append_bias_term(xtest)
-    xval = append_bias_term(xval) if not args.test else None
-
-        ### WRITE YOUR CODE HERE to do any other data processing
+        # Append bias term
+        xtrain = append_bias_term(xtrain)
+        xtest = append_bias_term(xtest)
 
 
 
-    
-    ### WRITE YOUR CODE HERE to do any other data processing
 
-    
 
     ## 3. Initialize the method you want to use.
 
