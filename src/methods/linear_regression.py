@@ -32,8 +32,7 @@ class LinearRegression(object):
         X = np.hstack([np.ones((N, 1)), training_data])  # bias term with ones its shape (N, D+1)
         
         # Regularization matrix: 
-        I = np.eye(D + 1)
-        I[0, 0] = 0        # 1st elmt set to 0 to exclude bias from regularization
+        I = np.eye(D+1)
         
         # Closed form solution with regularization for ridge regression
         self.weights = np.linalg.inv(X.T @ X + self.lmda * I) @ (X.T @ training_labels)
@@ -42,7 +41,7 @@ class LinearRegression(object):
         ###
         ##
 
-        return pred_labels #pred_regression_targets
+        return pred_labels 
 
 
     def predict(self, test_data):
@@ -64,5 +63,4 @@ class LinearRegression(object):
 
         ###
         ##
-
-        return test_labels #pred_regression_targets
+        return test_labels 
