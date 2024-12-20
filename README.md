@@ -93,8 +93,12 @@ Each milestone includes a concise 2-page report covering:
 - **Introduction**: Project goals and objectives.
 - **Methods**: Implementation details and hyperparameter tuning.
 - **Experiments/Results**: Performance evaluation with visualizations.
+      CNN achieved over 90% accuracy with optimal hyperparameters.
+      Transformer achieved up to 82.46% accuracy with careful tuning.
+      Optimizer choice (SGD vs. Adam) significantly impacted Transformer performanc
 - **Discussion/Conclusion**: Analysis of results and insights.
 
+  (contact for more)
 ---
 
 ## 🛡️ Important Notes
